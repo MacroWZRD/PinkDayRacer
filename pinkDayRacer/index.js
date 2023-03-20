@@ -23,79 +23,12 @@ const STATE_GAMEOVER = 4;
 // current state
 var state = STATE_INIT;
 
-// ---------------------------------------------------------
-// Main Scene
-// ---------------------------------------------------------
 
+import mainScene from "./mainScene_module.js"
+import pauseScene from "./pauseScene_module.js"
 
-class MainScene extends Phaser.Scene 
-{
-    constructor(){
-        super({key: 'SceneMain'});
-    }
-
-    preload(){
-        this.load.image("imgBack", "img/bg.jpg");
-    }
-
-    create(){
-        // backgrounds
-        this.sprBack = this.add.image(SCREEN_CX, SCREEN_CY, "imgBack");
-
-        // listener to pause game
-        this.input.keyboard.on("keydown-P", function(){
-            console.log("Game is paused. Press [P] to resume.");
-            this.scene.pause();
-            this.scene.launch("ScenePause");
-        }, this);
-
-        this.events.on("resume", function(){
-            console.log("Game is resumed. Press [P] to pause.");
-        }, this);
-    }
-
-    update(time, delta){
-        switch(state){
-            case STATE_INIT:
-                console.log("Init game");
-                state = STATE_RESTART;
-                break;
-
-            case STATE_RESTART:
-                console.log("Restart game");
-                state = STATE_PLAY;
-                break;
-
-            case STATE_PLAY:
-                console.log("Playing game");
-                // state = STATE_GAMEOVER;
-                break;
-
-            case STATE_GAMEOVER:
-                console.log("Game over.");
-                break;
-        }
-    }
-}
-
-// ---------------------------------------------------------
-// Pause Scene
-// ---------------------------------------------------------
-
-class PauseScene extends Phaser.Scene 
-{
-    constructor(){
-        super({key: 'ScenePause'});
-    }
-
-    create(){
-        // listener to resume game
-        this.input.keyboard.on("keydown-P", function(){
-            this.scene.resume("SceneMain");
-            this.scene.stop();
-        }, this);
-    }
-}
+var MainScene = new mainScene(SCREEN_CX, SCREEN_CY, STATE_INIT, STATE_RESTART, STATE_PLAY, STATE_GAMEOVER);
+var PauseScene = new pauseScene();
 
 // ---------------------------------------------------------
 // Initializing Phaser Game
