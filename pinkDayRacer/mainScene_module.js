@@ -21,15 +21,19 @@ export default class MainScene extends Phaser.Scene
         // backgrounds
         this.sprBack = this.add.image(this.SCREEN_CX, this.SCREEN_CY, "imgBack");
 
+        //instances
+        this.circuit = new Circuit(this);
+        this.settings = new Settings(this);
+
         // listener to pause game
         this.input.keyboard.on("keydown-P", function(){
-            console.log("Game is paused. Press [P] to resume.");
+            this.settings.txtPause.text = "[P] Resume"
             this.scene.pause();
             this.scene.launch("ScenePause");
         }, this);
 
         this.events.on("resume", function(){
-            console.log("Game is resumed. Press [P] to pause.");
+            this.settings.show();
         }, this);
     }
 
@@ -42,6 +46,9 @@ export default class MainScene extends Phaser.Scene
 
             case this.STATE_RESTART:
                 console.log("Restart game");
+
+                this.circuit.create();
+
                 state = this.STATE_PLAY;
                 break;
 

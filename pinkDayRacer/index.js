@@ -23,7 +23,6 @@ const STATE_GAMEOVER = 4;
 // current state
 var state = STATE_INIT;
 
-
 import mainScene from "./mainScene_module.js"
 import pauseScene from "./pauseScene_module.js"
 
