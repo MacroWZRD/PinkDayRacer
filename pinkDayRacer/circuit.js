@@ -18,6 +18,7 @@ class Circuit
         this.segments = [];
 
         this.createRoad();
+        console.log("created segments");
     }
 
     createRoad(){
@@ -48,6 +49,6 @@ class Circuit
     }
 
     render2D(){
-
+            
     }
 }

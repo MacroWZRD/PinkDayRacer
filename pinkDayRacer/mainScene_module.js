@@ -3,7 +3,7 @@
 // ---------------------------------------------------------
 export default class MainScene extends Phaser.Scene 
 {
-    constructor(SCREEN_CX, SCREEN_CY, STATE_INIT, STATE_RESTART, STATE_PLAY, STATE_GAMEOVER){
+    constructor(SCREEN_CX, SCREEN_CY, STATE_INIT, STATE_RESTART, STATE_PLAY, STATE_GAMEOVER, STATE){
         super({key: 'SceneMain'});
         this.SCREEN_CX = SCREEN_CX;
         this.SCREEN_CY = SCREEN_CY;
@@ -11,6 +11,7 @@ export default class MainScene extends Phaser.Scene
         this.STATE_RESTART = STATE_RESTART;
         this.STATE_PLAY = STATE_PLAY;
         this.STATE_GAMEOVER = STATE_GAMEOVER;
+        this.STATE = STATE;
     }
 
     preload(){
@@ -37,11 +38,11 @@ export default class MainScene extends Phaser.Scene
         }, this);
     }
 
-    update(state, time, delta){
-        switch(state){
+    update(time, delta){
+        switch(this.STATE){
             case this.STATE_INIT:
                 console.log("Init game");
-                state = this.STATE_RESTART;
+                this.STATE = this.STATE_RESTART;
                 break;
 
             case this.STATE_RESTART:
@@ -49,7 +50,7 @@ export default class MainScene extends Phaser.Scene
 
                 this.circuit.create();
 
-                state = this.STATE_PLAY;
+                this.STATE = this.STATE_PLAY;
                 break;
 
             case this.STATE_PLAY:

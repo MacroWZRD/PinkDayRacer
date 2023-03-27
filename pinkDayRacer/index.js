@@ -21,12 +21,12 @@ const STATE_GAMEOVER = 4;
 // ---------------------------------------------------------
 
 // current state
-var state = STATE_INIT;
+var STATE = STATE_INIT;
 
 import mainScene from "./mainScene_module.js"
 import pauseScene from "./pauseScene_module.js"
 
-var MainScene = new mainScene(SCREEN_CX, SCREEN_CY, STATE_INIT, STATE_RESTART, STATE_PLAY, STATE_GAMEOVER);
+var MainScene = new mainScene(SCREEN_CX, SCREEN_CY, STATE_INIT, STATE_RESTART, STATE_PLAY, STATE_GAMEOVER, STATE);
 var PauseScene = new pauseScene();
 
 // ---------------------------------------------------------
