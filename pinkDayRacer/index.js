@@ -16,6 +16,8 @@ const STATE_RESTART = 2;
 const STATE_PLAY = 3;
 const STATE_GAMEOVER = 4;
 
+// sprites
+const PLAYER = 0;
 // ---------------------------------------------------------
 // Global Variables
 // ---------------------------------------------------------
@@ -34,14 +36,22 @@ class MainScene extends Phaser.Scene
 
     preload(){
         this.load.image("imgBack", "img/bg.jpg");
+        this.load.image("imgPlayer", "img/player.png")
     }
 
     create(){
         // backgrounds
         this.sprBack = this.add.image(SCREEN_CX, SCREEN_CY, "imgBack");
+
+        //manually drawn sprites
+        this.sprites = [
+            this.add.image(0,0,"imgPlayer").setVisible(false)
+        ];
+
         //instances
         this.circuit = new Circuit(this);
         this.camera = new Camera(this);
+        this.player = new Player(this);
         this.settings = new Settings(this);
 
         // listener to pause game
@@ -62,13 +72,14 @@ class MainScene extends Phaser.Scene
                 console.log("Init game");
 
                 this.camera.init();
+                this.player.init();
 
                 state = STATE_RESTART;
                 break;
 
             case STATE_RESTART:
                 console.log("Restart game");
-
+                this.player.restart();
                 this.circuit.create();
 
                 state = STATE_PLAY;
@@ -76,7 +87,8 @@ class MainScene extends Phaser.Scene
 
             case STATE_PLAY:
                 console.log("Playing game");
-                
+                var dt = Math.min(1, delta/1000); //duration of the time period
+                this.player.update(dt);
                 this.camera.update();
                 this.circuit.render3D();
 

@@ -7,6 +7,9 @@ class Circuit
         // graphics to draw the road polygons on it
         this.graphics = scene.add.graphics(0,0);
 
+        //texture to draw sprites on it
+        this.texture = scene.add.renderTexture(0, 0, SCREEN_W, SCREEN_H);
+
         // array of road segments
         this.segments = [];
 
@@ -105,6 +108,8 @@ class Circuit
     render3D(){
         this.graphics.clear();
 
+        var clipBottomLine = SCREEN_H;
+
         var camera = this.scene.camera;
 
         var baseSegment = this.getSegment(camera.z);
@@ -115,9 +120,12 @@ class Circuit
             var currIndex = (baseIndex + n) % this.total_segments;
             var currSegment = this.segments[currIndex];
             
-            this.project3D(currSegment.point, camera.x, camera.y, camera.z, camera.distToPlane);
+            var offsetZ = (currIndex < baseIndex) ? this.roadLength : 0;
+
+            this.project3D(currSegment.point, camera.x, camera.y, camera.z-offsetZ, camera.distToPlane);
             
-            if (n>0){
+            var currBottomLine = currSegment.point.screen.y;
+            if (n>0 && currBottomLine < clipBottomLine){
                 var prevIndex = (currIndex>0) ? currIndex-1 : this.total_segments-1;
                 var prevSegment = this.segments[prevIndex];
 
@@ -129,10 +137,18 @@ class Circuit
                     p2.x, p2.y, p2.w,
                     currSegment.color
                 );
+
+                //move the clipping bottom line up
+                clipBottomLine = currBottomLine;
             }
             
         }    
         
+        //draw all the visible objects on the rendering texture
+        this.texture.clear();
+
+        var player = this.scene.player;
+        this.texture.draw(player.sprite, player.screen.x, player.screen.y);
     }
 
     drawSegment(x1, y1, w1, x2, y2, w2, color){

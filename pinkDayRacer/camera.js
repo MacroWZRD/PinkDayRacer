@@ -15,7 +15,13 @@ class Camera{
     }
 
     update(){
-        this.z = -this.distToPlayer;
+        var player = this.scene.player;
+        var circuit = this.scene.circuit;
+        this.x = player.x * circuit.roadWidth;
+        this.z = player.z - this.distToPlayer;
+
+        //don't let camera Z go to negative
+        if (this.z < 0) this.z += circuit.roadLength;
     }
 
 }
