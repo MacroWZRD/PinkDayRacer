@@ -16,6 +16,9 @@ const STATE_RESTART = 2;
 const STATE_PLAY = 3;
 const STATE_GAMEOVER = 4;
 
+// sprites
+const PLAYER = 0;
+
 // ---------------------------------------------------------
 // Global Variables
 // ---------------------------------------------------------
@@ -34,6 +37,7 @@ class MainScene extends Phaser.Scene
 
     preload(){
         this.load.image("imgBack", "img/bg.jpg");
+        this.load.image('imgPlayer', 'img/player.png');
     }
 
     create(){
