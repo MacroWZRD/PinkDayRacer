@@ -39,7 +39,6 @@ class MainScene extends Phaser.Scene
     create(){
         // backgrounds
         this.sprBack = this.add.image(SCREEN_CX, SCREEN_CY, "imgBack");
-
         //instances
         this.circuit = new Circuit(this);
         this.camera = new Camera(this);
