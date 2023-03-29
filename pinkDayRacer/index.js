@@ -21,13 +21,93 @@ const STATE_GAMEOVER = 4;
 // ---------------------------------------------------------
 
 // current state
-var STATE = STATE_INIT;
+var state = STATE_INIT;
 
-import mainScene from "./mainScene_module.js"
-import pauseScene from "./pauseScene_module.js"
+// ---------------------------------------------------------
+// Main Scene
+// ---------------------------------------------------------
+class MainScene extends Phaser.Scene 
+{
+    constructor(){
+        super({key: 'SceneMain'});
+    }
 
-var MainScene = new mainScene(SCREEN_CX, SCREEN_CY, STATE_INIT, STATE_RESTART, STATE_PLAY, STATE_GAMEOVER, STATE);
-var PauseScene = new pauseScene();
+    preload(){
+        this.load.image("imgBack", "img/bg.jpg");
+    }
+
+    create(){
+        // backgrounds
+        this.sprBack = this.add.image(SCREEN_CX, SCREEN_CY, "imgBack");
+
+        //instances
+        this.circuit = new Circuit(this);
+        this.camera = new Camera(this);
+        this.settings = new Settings(this);
+
+        // listener to pause game
+        this.input.keyboard.on("keydown-P", function(){
+            this.settings.txtPause.text = "[P] Resume"
+            this.scene.pause();
+            this.scene.launch("ScenePause");  
+        }, this);
+
+        this.events.on("resume", function(){
+            this.settings.show();
+        }, this);
+    }
+
+    update(time, delta){   
+        switch(state){
+            case STATE_INIT:
+                console.log("Init game");
+
+                this.camera.init();
+
+                state = STATE_RESTART;
+                break;
+
+            case STATE_RESTART:
+                console.log("Restart game");
+
+                this.circuit.create();
+
+                state = STATE_PLAY;
+                break;
+
+            case STATE_PLAY:
+                console.log("Playing game");
+                
+                this.camera.update();
+                this.circuit.render3D();
+
+                // state = STATE_GAMEOVER;
+                break;
+
+            case STATE_GAMEOVER:
+                console.log("Game over.");
+                break;
+        }
+    }
+}
+
+// ---------------------------------------------------------
+// Pause Scene
+// ---------------------------------------------------------
+class PauseScene extends Phaser.Scene 
+{
+    constructor(){
+        super({key: 'ScenePause'});
+    }
+
+    create(){
+        // listener to resume game
+        this.input.keyboard.on("keydown-P", function(){
+            this.scene.resume("SceneMain");
+            this.scene.stop();
+        }, this);
+    }
+}
 
 // ---------------------------------------------------------
 // Initializing Phaser Game
