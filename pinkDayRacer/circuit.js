@@ -76,10 +76,13 @@ class Circuit
             point: {
                 world: {x: 0, y: 0, z: n*this.segmentLength},
                 screen: {x: 0, y: 0, z: 0},
-                scale: -1
+                scale: -1,
+                
             },
 
-            color: Math.floor(n/this.rumble_segments)%2 ? COLORS.DARK : COLORS.LIGHT
+            color: Math.floor(n/this.rumble_segments)%2 ? COLORS.DARK : COLORS.LIGHT,
+
+            curve: (100>n && n<500) ? 0.5 : 0
         });
     }
 
@@ -108,6 +111,8 @@ class Circuit
     render3D(){
         this.graphics.clear();
 
+        var x = 0, dx = 0;
+
         var clipBottomLine = SCREEN_H;
 
         var camera = this.scene.camera;
@@ -122,7 +127,10 @@ class Circuit
             
             var offsetZ = (currIndex < baseIndex) ? this.roadLength : 0;
 
-            this.project3D(currSegment.point, camera.x, camera.y, camera.z-offsetZ, camera.distToPlane);
+            this.project3D(currSegment.point, camera.x - x, camera.y, camera.z-offsetZ, camera.distToPlane);
+
+            x += dx;
+            dx += currSegment.curve;
             
             var currBottomLine = currSegment.point.screen.y;
             if (n>0 && currBottomLine < clipBottomLine){
