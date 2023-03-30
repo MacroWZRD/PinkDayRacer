@@ -82,7 +82,7 @@ class Circuit
 
             color: Math.floor(n/this.rumble_segments)%2 ? COLORS.DARK : COLORS.LIGHT,
 
-            curve: (100>n && n<500) ? 0.5 : 0
+            curve: (500>n) ? 0.5 : -0.5
         });
     }
 
