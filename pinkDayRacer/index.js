@@ -94,7 +94,6 @@ class MainScene extends Phaser.Scene
                 this.player.update(dt);
                 this.camera.update();
                 this.circuit.render3D();
-                console.log(this.player.laps);
                 if (this.player.laps > 0){
                     state = STATE_GAMEOVER;
                 }

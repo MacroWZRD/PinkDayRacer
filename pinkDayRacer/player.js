@@ -25,6 +25,15 @@ class Player{
         this.turnSpeed = 0;
         this.turnClamp = [-0.9, 0.9];
 
+        this.numLanes = 5;
+        this.lanesLines = [0, 0, 0, 0, 0, 0];
+        var d = (this.turnClamp[1] - this.turnClamp[0])/this.numLanes;
+        console.log(d);
+        for(var i=0; i < this.numLanes + 1; i++){
+            this.lanesLines[i] = this.turnClamp[0] + d * i;
+        }
+
+        this.lane = 0;
         this.laps = 0;
     }
 
@@ -46,6 +55,7 @@ class Player{
 
         this.speed = this.maxSpeed;
         this.turnSpeed = 0;
+        this.lane = 0;
         this.laps = 0;
     }
 
@@ -54,10 +64,21 @@ class Player{
         this.turnSpeed = (this.cursors.right.isDown || this.D_KEY.isDown) ? this.maxTurnSpeed : this.turnSpeed;
     }
 
+    lanes(){
+        for(var i=0; i < this.numLanes; i++){
+            console.log(this.lanesLines[i], this.x , this.lanesLines[i + 1], this.lanesLines[i] <= this.x <= this.lanesLines[i + 1])
+            if(this.lanesLines[i] <= this.x <= this.lanesLines[i + 1]){
+                this.lane = i;
+                return
+            } 
+        }
+    }
+
 
     update(dt){
         this.turnSpeed = 0;
         this.turning();
+        this.lanes();
         var circuit = this.scene.circuit;
         this.z += this.speed * dt;
         this.x += this.turnSpeed * dt
