@@ -24,6 +24,8 @@ class Player{
         this.maxTurnSpeed = 1;
         this.turnSpeed = 0;
         this.turnClamp = [-0.9, 0.9];
+
+        this.laps = 0;
     }
 
     init(){
@@ -43,6 +45,8 @@ class Player{
         this.z = 0;
 
         this.speed = this.maxSpeed;
+        this.turnSpeed = 0;
+        this.laps = 0;
     }
 
     turning(){
@@ -54,11 +58,13 @@ class Player{
     update(dt){
         this.turnSpeed = 0;
         this.turning();
-        console.log(this.x);
         var circuit = this.scene.circuit;
         this.z += this.speed * dt;
         this.x += this.turnSpeed * dt
         this.x = Math.max(Math.min(this.x, this.turnClamp[1]), this.turnClamp[0]);
-        if (this.z >= circuit.roadLength) this.z -= circuit.roadLength;
+        if (this.z >= circuit.roadLength) {
+            this.z -= circuit.roadLength;
+            this.laps += 1;
+        }
     }
 }

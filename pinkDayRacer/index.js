@@ -54,6 +54,7 @@ class MainScene extends Phaser.Scene
         this.camera = new Camera(this);
         this.player = new Player(this);
         this.settings = new Settings(this);
+        this.timeElapsed = new TimeElapsed(this);
 
         // listener to pause game
         this.input.keyboard.on("keydown-P", function(){
@@ -89,11 +90,15 @@ class MainScene extends Phaser.Scene
             case STATE_PLAY:
                 console.log("Playing game");
                 var dt = Math.min(1, delta/1000); //duration of the time period
+                this.timeElapsed.update();
                 this.player.update(dt);
                 this.camera.update();
                 this.circuit.render3D();
-
-                // state = STATE_GAMEOVER;
+                console.log(this.player.laps);
+                if (this.player.laps > 0){
+                    state = STATE_GAMEOVER;
+                }
+                // 
                 break;
 
             case STATE_GAMEOVER:
