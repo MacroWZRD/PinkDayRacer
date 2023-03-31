@@ -26,10 +26,10 @@ class Circuit
         this.rumble_segments = 5;
 
         // number of road lanes
-		this.roadLanes = 3;
+		this.roadLanes = 5;
 
         // road width (half of the road)
-        this.roadWidth = 1000;
+        this.roadWidth = 1250;
 
         // total road length
         this.roadLength = null;
