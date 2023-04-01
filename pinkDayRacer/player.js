@@ -66,8 +66,7 @@ class Player{
 
     lanes(){
         for(var i=0; i < this.numLanes; i++){
-            console.log(this.lanesLines[i], this.x , this.lanesLines[i + 1], this.lanesLines[i] <= this.x <= this.lanesLines[i + 1])
-            if(this.lanesLines[i] <= this.x <= this.lanesLines[i + 1]){
+            if(this.lanesLines[i] <= this.x && this.x <= this.lanesLines[i + 1]){
                 this.lane = i;
                 return
             } 
