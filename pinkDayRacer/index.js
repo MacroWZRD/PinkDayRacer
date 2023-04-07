@@ -38,6 +38,7 @@ class MainScene extends Phaser.Scene
     preload(){
         this.load.image("imgBack", "img/bg.jpg");
         this.load.image('imgPlayer', 'img/player.png');
+        this.load.image("eventBox", "img/eventBox.png")
     }
 
     create(){
@@ -56,6 +57,7 @@ class MainScene extends Phaser.Scene
         this.player = new Player(this, this.gamepad);
         this.settings = new Settings(this);
         this.timeElapsed = new TimeElapsed(this);
+        this.scenarioUI = new ScenarioUI(this, this.player, this.camera);
        
         // listener to pause game
         this.input.keyboard.on("keydown-P", function(){
@@ -96,6 +98,9 @@ class MainScene extends Phaser.Scene
                 this.gamepad.update();
                 this.camera.update();
                 this.circuit.render3D();
+                this.scenarioUI.update(); //This will probably be called later 
+                //from some GameManager rather than index (a js made for spawning stuff and managing ui)
+
                 //console.log(this.player.lane);
                 if (this.player.laps > 0){
                     state = STATE_GAMEOVER;
