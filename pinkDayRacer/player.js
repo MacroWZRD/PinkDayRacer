@@ -7,6 +7,8 @@ class Player{
         //this.gamepad = this.scene.input.gamepad;
         this.A_KEY = this.scene.input.keyboard.addKey(65);
         this.D_KEY = this.scene.input.keyboard.addKey(68);
+        this.S_KEY = this.scene.input.keyboard.addKey(83);
+        this.W_KEY = this.scene.input.keyboard.addKey(87);
         this.sprite = scene.sprites[PLAYER]
 
         this.x = 0;
@@ -21,18 +23,17 @@ class Player{
 
         //max speed (to avoid moving for more than 1 road segment, assuming 60 fps)
         this.maxSpeed = (scene.circuit.segmentLength) / (1/60);
-
+        this.acceleration = this.maxSpeed/3;
         this.speed = 0; //current speed
 
         this.maxTurnSpeed = 1;
         this.turnSpeed = 0;
         this.turnClamp = [-0.9, 0.9];
 
-        this.numLanes = 5;
         this.lanesLines = [0, 0, 0, 0, 0, 0];
-        var d = (this.turnClamp[1] - this.turnClamp[0])/this.numLanes;
-        console.log(d);
-        for(var i=0; i < this.numLanes + 1; i++){
+        var d = (this.turnClamp[1] - this.turnClamp[0])/(this.lanesLines.length - 1);
+        
+        for(var i=0; i < this.lanesLines.length; i++){
             this.lanesLines[i] = this.turnClamp[0] + d * i;
         }
 
@@ -56,7 +57,7 @@ class Player{
         this.y = 0;
         this.z = 0;
 
-        this.speed = this.maxSpeed;
+        this.speed = 0;
         this.turnSpeed = 0;
         this.lane = 0;
         this.laps = 0;
@@ -68,13 +69,24 @@ class Player{
             this.turnSpeed = (this.cursors.right.isDown || this.D_KEY.isDown) ? this.maxTurnSpeed : this.turnSpeed;
         }else{
             this.turnSpeed = this.gamepad.leftAxis[0] * this.maxTurnSpeed;
-            console.log(this.gamepad.leftAxis[0], this.gamepad.leftAxis[1]);
         }
        
     }
 
+    accelerate(dt){
+        if (!this.gamepad.enabled){
+            this.speed += (this.cursors.up.isDown || this.W_KEY.isDown) ? this.acceleration * dt: 0;
+            this.speed += (this.cursors.down.isDown || this.S_KEY.isDown) ? -this.acceleration * dt: 0;
+        }else{
+            this.speed += -this.gamepad.leftAxis[1] * this.acceleration * dt;
+        }
+
+        this.speed = Math.max(-this.maxSpeed, Math.min(this.speed, this.maxSpeed)) 
+    }
+
     lanes(){
-        for(var i=0; i < this.numLanes; i++){
+        console.log(this.lanesLines);
+        for(var i=0; i < this.lanesLines.length; i++){
             if(this.lanesLines[i] <= this.x && this.x <= this.lanesLines[i + 1]){
                 this.lane = i;
                 return
@@ -85,15 +97,23 @@ class Player{
 
     update(dt){
         this.turnSpeed = 0;
-        this.turning();
+        this.turning(dt);
+        this.accelerate(dt);
         this.lanes();
         var circuit = this.scene.circuit;
         this.z += this.speed * dt;
         this.x += this.turnSpeed * dt
         this.x = Math.max(Math.min(this.x, this.turnClamp[1]), this.turnClamp[0]);
+        this.z = Math.max(this.z, 0);
+        if(this.z <= 0){
+            this.speed = Math.max(this.speed, 0);
+        }
         if (this.z >= circuit.roadLength) {
             this.z -= circuit.roadLength;
             this.laps += 1;
         }
+
+        console.log(this.lane);
+
     }
 }
