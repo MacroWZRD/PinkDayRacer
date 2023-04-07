@@ -52,10 +52,11 @@ class MainScene extends Phaser.Scene
         //instances
         this.circuit = new Circuit(this);
         this.camera = new Camera(this);
-        this.player = new Player(this);
+        this.gamepad = new Gamepad(this);
+        this.player = new Player(this, this.gamepad);
         this.settings = new Settings(this);
         this.timeElapsed = new TimeElapsed(this);
-
+       
         // listener to pause game
         this.input.keyboard.on("keydown-P", function(){
             this.settings.txtPause.text = "[P] Resume"
@@ -88,13 +89,14 @@ class MainScene extends Phaser.Scene
                 break;
 
             case STATE_PLAY:
-                console.log("Playing game");
+                //console.log("Playing game");
                 var dt = Math.min(1, delta/1000); //duration of the time period
                 this.timeElapsed.update();
                 this.player.update(dt);
+                this.gamepad.update();
                 this.camera.update();
                 this.circuit.render3D();
-                console.log(this.player.lane);
+                //console.log(this.player.lane);
                 if (this.player.laps > 0){
                     state = STATE_GAMEOVER;
                 }
@@ -102,7 +104,7 @@ class MainScene extends Phaser.Scene
                 break;
 
             case STATE_GAMEOVER:
-                console.log("Game over.");
+                //console.log("Game over.");
                 break;
         }
     }
@@ -135,6 +137,10 @@ var config = {
     type: Phaser.AUTO,
     width: SCREEN_W,
     height: SCREEN_H,
+
+    input: {
+        gamepad : true
+    },
 
     scale: {
         mode: Phaser.Scale.FIT,

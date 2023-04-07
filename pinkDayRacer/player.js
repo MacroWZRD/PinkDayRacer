@@ -1,7 +1,10 @@
 class Player{
-    constructor(scene){
+    constructor(scene, gamepad){
         this.scene = scene;
-        this.cursors = this.scene.input.keyboard.createCursorKeys(); //For input events
+        this.gamepad = gamepad;
+        this.cursors = this.scene.input.keyboard.createCursorKeys(); //For keyboard input events
+        this.scene.game.input.gamepad;//.start();
+        //this.gamepad = this.scene.input.gamepad;
         this.A_KEY = this.scene.input.keyboard.addKey(65);
         this.D_KEY = this.scene.input.keyboard.addKey(68);
         this.sprite = scene.sprites[PLAYER]
@@ -60,8 +63,14 @@ class Player{
     }
 
     turning(){
-        this.turnSpeed = (this.cursors.left.isDown || this.A_KEY.isDown) ? -this.maxTurnSpeed : 0;
-        this.turnSpeed = (this.cursors.right.isDown || this.D_KEY.isDown) ? this.maxTurnSpeed : this.turnSpeed;
+        if (!this.gamepad.enabled){
+            this.turnSpeed = (this.cursors.left.isDown || this.A_KEY.isDown) ? -this.maxTurnSpeed : 0;
+            this.turnSpeed = (this.cursors.right.isDown || this.D_KEY.isDown) ? this.maxTurnSpeed : this.turnSpeed;
+        }else{
+            this.turnSpeed = this.gamepad.leftAxis[0] * this.maxTurnSpeed;
+            console.log(this.gamepad.leftAxis[0], this.gamepad.leftAxis[1]);
+        }
+       
     }
 
     lanes(){
