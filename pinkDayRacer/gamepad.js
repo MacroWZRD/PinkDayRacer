@@ -9,6 +9,20 @@ class Gamepad{
 
         this.leftAxis = [0, 0];
         this.rightAxis = [0, 0];
+
+        this.button = {"A" : false, "B" : false, "X" : false, "Y" : false, "UP" : false, "DOWN" : false, "LEFT" : false, "RIGHT" : false};
+
+    }
+
+    update_buttons(button, pad){
+        button["A"] = pad.A;
+        button["B"] = pad.B;
+        button["X"] = pad.X;
+        button["Y"] = pad.Y;
+        button["UP"] = pad.up;
+        button["DOWN"] = pad.down;
+        button["LEFT"] = pad.left;
+        button["RIGHT"] = pad.right;
     }
 
     update(){
@@ -18,9 +32,11 @@ class Gamepad{
             return;
         }
 
+        
         this.enabled = true;
         var pad = this.gamepad.getPad(0);
-        
+        this.update_buttons(this.button, pad);
+
         if (pad.axes.length){
             var l = this.leftJoystick;
             var r =  this.rightJoystick;

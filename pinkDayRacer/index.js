@@ -48,7 +48,7 @@ class MainScene extends Phaser.Scene
         this.sprites = [
             this.add.image(0,0,"imgPlayer").setVisible(false)
         ];
-
+        
         //instances
         this.circuit = new Circuit(this);
         this.camera = new Camera(this);
