@@ -78,7 +78,14 @@ class Player{
             this.speed += (this.cursors.up.isDown || this.W_KEY.isDown) ? this.acceleration * dt: 0;
             this.speed += (this.cursors.down.isDown || this.S_KEY.isDown) ? -this.acceleration * dt: 0;
         }else{
-            this.speed += -this.gamepad.leftAxis[1] * this.acceleration * dt;
+            console.log(this.gamepad.leftAxis[1]);
+            if(this.gamepad.leftAxis[1] != 0){
+                this.speed += -this.gamepad.leftAxis[1] * this.acceleration * dt;
+            }else{
+                this.speed += this.gamepad.button["L2"] * this.acceleration * dt;
+                this.speed += -this.gamepad.button["R2"] * this.acceleration * dt;
+            }
+            
         }
 
         this.speed = Math.max(-this.maxSpeed, Math.min(this.speed, this.maxSpeed)) 

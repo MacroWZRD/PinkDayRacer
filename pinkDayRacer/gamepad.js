@@ -10,7 +10,9 @@ class Gamepad{
         this.leftAxis = [0, 0];
         this.rightAxis = [0, 0];
 
-        this.button = {"A" : false, "B" : false, "X" : false, "Y" : false, "UP" : false, "DOWN" : false, "LEFT" : false, "RIGHT" : false};
+        this.button = {"A" : false, "B" : false, "X" : false, "Y" : false, 
+                       "UP" : false, "DOWN" : false, "LEFT" : false, "RIGHT" : false,
+                       "L1" : false, "L2" : false, "R1" : false, "R2" : false};
 
     }
 
@@ -23,6 +25,11 @@ class Gamepad{
         button["DOWN"] = pad.down;
         button["LEFT"] = pad.left;
         button["RIGHT"] = pad.right;
+
+        button["L1"] = pad.L1;
+        button["L2"] = pad.L2;
+        button["R1"] = pad.R1;
+        button["R2"] = pad.R2;
     }
 
     update(){
