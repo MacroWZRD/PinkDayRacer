@@ -60,6 +60,7 @@ class MainScene extends Phaser.Scene
         this.settings = new Settings(this);
         this.timeElapsed = new TimeElapsed(this);
         this.scenarioUI = new ScenarioUI(this, this.player, this.camera);
+        this.leaderboardUI = new LeaderboardUI(this, this.firestore);
        
         // listener to pause game
         this.input.keyboard.on("keydown-P", function(){
@@ -101,6 +102,7 @@ class MainScene extends Phaser.Scene
                 this.camera.update();
                 this.circuit.render3D();
                 this.scenarioUI.update(); //This will probably be called later 
+                this.leaderboardUI.update();
                 //from some GameManager rather than index (a js made for spawning stuff and managing ui)
 
                 //console.log(this.player.lane);

@@ -19,7 +19,6 @@ class Firestore{
             console.log(this.players, "is the updated player list");
         });
 
-        this.addScore(this.db, "Jhon Smith", 69);
     }
 
     //only reads single document so it is not used
