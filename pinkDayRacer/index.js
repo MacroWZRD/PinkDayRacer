@@ -1,30 +1,31 @@
 // ---------------------------------------------------------
-// Global Constants
+// Firebase Constants
 // ---------------------------------------------------------
 
-// screen scize
-const SCREEN_W = 1920;
-const SCREEN_H = 1080;
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.19.1/firebase-app.js";
+import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.19.1/firebase-analytics.js";
+import { getFirestore, collection, query, where, addDoc, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/9.19.1/firebase-firestore.js";
 
-// coordinates of the screen center
-const SCREEN_CX = SCREEN_W/2;
-const SCREEN_CY = SCREEN_H/2;
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
 
-// game states
-const STATE_INIT = 1;
-const STATE_RESTART = 2;
-const STATE_PLAY = 3;
-const STATE_GAMEOVER = 4;
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+apiKey: "AIzaSyDBbkYU0HNdRIJETCp1WyDEc_0sbOyBqIY",
+authDomain: "pink-21ee8.firebaseapp.com",
+projectId: "pink-21ee8",
+storageBucket: "pink-21ee8.appspot.com",
+messagingSenderId: "522157463316",
+appId: "1:522157463316:web:928718ced10a3951a75401",
+measurementId: "G-ERTYZDFYY1"
+};
 
-// sprites
-const PLAYER = 0;
-
-// ---------------------------------------------------------
-// Global Variables
-// ---------------------------------------------------------
-
-// current state
-var state = STATE_INIT;
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+const db = getFirestore(app);
 
 // ---------------------------------------------------------
 // Main Scene
@@ -55,6 +56,7 @@ class MainScene extends Phaser.Scene
         this.camera = new Camera(this);
         this.gamepad = new Gamepad(this);
         this.player = new Player(this, this.gamepad);
+        this.firestore = new Firestore(db, collection, query, where, addDoc, onSnapshot)
         this.settings = new Settings(this);
         this.timeElapsed = new TimeElapsed(this);
         this.scenarioUI = new ScenarioUI(this, this.player, this.camera);

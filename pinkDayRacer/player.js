@@ -92,7 +92,6 @@ class Player{
     }
 
     lanes(){
-        console.log(this.lanesLines);
         for(var i=0; i < this.lanesLines.length; i++){
             if(this.lanesLines[i] <= this.x && this.x <= this.lanesLines[i + 1]){
                 this.lane = i;
@@ -119,8 +118,5 @@ class Player{
             this.z -= circuit.roadLength;
             this.laps += 1;
         }
-
-        console.log(this.lane);
-
     }
 }

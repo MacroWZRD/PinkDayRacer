@@ -34,7 +34,7 @@ class Gamepad{
 
     update(){
         if (this.gamepad.total == 0){
-            console.log("No gamepad");
+            //console.log("No gamepad");
             this.enabled = false;
             return;
         }
