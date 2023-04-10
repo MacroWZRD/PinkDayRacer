@@ -6,6 +6,7 @@ class Circuit
 
         // graphics to draw the road polygons on it
         this.graphics = scene.add.graphics(0,0);
+        console.log(this.graphics);
 
         //texture to draw sprites on it
         this.texture = scene.add.renderTexture(0, 0, SCREEN_W, SCREEN_H);
@@ -205,6 +206,6 @@ class Circuit
         this.graphics.lineTo(x4, y4);
 
         this.graphics.closePath();
-        this.graphics.fill();
+        this.graphics.fillPath();
     }
 }
