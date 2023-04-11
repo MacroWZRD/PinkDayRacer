@@ -24,19 +24,19 @@ class Player{
         //max speed (to avoid moving for more than 1 road segment, assuming 60 fps)
         this.maxSpeed = (scene.circuit.segmentLength) / (1/60);
         this.acceleration = this.maxSpeed/3;
+        this.groundFriction = this.maxSpeed/6;
         this.speed = 0; //current speed
 
         this.maxTurnSpeed = 1;
         this.turnSpeed = 0;
         this.turnClamp = [-0.9, 0.9];
 
-        this.lanesLines = [0, 0, 0, 0, 0, 0];
+        this.lanesLines = [0, 0, 0, 0];
         var d = (this.turnClamp[1] - this.turnClamp[0])/(this.lanesLines.length - 1);
         
         for(var i=0; i < this.lanesLines.length; i++){
             this.lanesLines[i] = this.turnClamp[0] + d * i;
         }
-
         this.lane = 0;
         this.laps = 0;
     }
@@ -78,17 +78,16 @@ class Player{
             this.speed += (this.cursors.up.isDown || this.W_KEY.isDown) ? this.acceleration * dt: 0;
             this.speed += (this.cursors.down.isDown || this.S_KEY.isDown) ? -this.acceleration * dt: 0;
         }else{
-            console.log(this.gamepad.leftAxis[1]);
-            if(this.gamepad.leftAxis[1] != 0){
-                this.speed += -this.gamepad.leftAxis[1] * this.acceleration * dt;
-            }else{
-                this.speed += this.gamepad.button["L2"] * this.acceleration * dt;
-                this.speed += -this.gamepad.button["R2"] * this.acceleration * dt;
-            }
+            // if(this.gamepad.leftAxis[1] != 0){
+            //     this.speed += -this.gamepad.leftAxis[1] * this.acceleration * dt;
+            // }else{
+            this.speed += -this.gamepad.button["L2"] * this.acceleration * dt;
+            this.speed += this.gamepad.button["R2"] * this.acceleration * dt;
+            // }
             
         }
 
-        this.speed = Math.max(-this.maxSpeed, Math.min(this.speed, this.maxSpeed)) 
+        this.speed = Math.max(0, Math.min(this.speed - this.groundFriction * dt, this.maxSpeed));
     }
 
     lanes(){

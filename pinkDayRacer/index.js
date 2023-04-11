@@ -65,45 +65,59 @@ class MainScene extends Phaser.Scene
     preload(){
         this.load.image("imgBack", "img/bg.jpg");
         this.load.image('imgPlayer', 'img/player.png');
-        this.load.image("eventBox", "img/eventBox.png")
+        this.load.image("eventBox", "img/eventBox.png");
+        this.load.image("title", "img/title.png");
     }
 
     create(){
         // backgrounds
         this.sprBack = this.add.image(SCREEN_CX, SCREEN_CY, "imgBack");
+        
+        this.input.keyboard.on("keydown-X", function(){
+            this.intermission();
+        }, this);
 
-        this.input.keyboard.on("keydown-SPACE", function(){
-            if(state == STATE_MENU){
-                state = STATE_RESTART;
-                this.init();
-                this.camera.init();
-                this.player.init();
-                this.settings = new Settings(this);
-                this.timeElapsed = new TimeElapsed(this);
-                this.scenarioUI = new ScenarioUI(this, this.player, this.camera);
-                this.leaderboardUI = new LeaderboardUI(this, this.firestore);
-                
-            }else{
-                if(state == STATE_GAMEOVER){
-                    this.sprBack = this.add.image(SCREEN_CX, SCREEN_CY, "imgBack");
-                    state = STATE_MENU;
-                }
-            }
+        this.input.keyboard.on("keydown-Y", function(){
+            this.intermission();
         }, this);
 
     }
 
-    update(time, delta){   
+    intermission(){
+        if(state == STATE_MENU){
+            state = STATE_RESTART;
+            this.init();
+            this.camera.init();
+            this.player.init();
+            this.settings = new Settings(this);
+            this.gamemanager = new GameManager(this,  new TimeElapsed(this), new ScenarioUI(this, this.player, this.camera));
+            this.leaderboardUI = new LeaderboardUI(this, this.firestore);
+            
+        }else{
+            if( state == STATE_GAMEOVER){
+                this.sprBack = this.add.image(SCREEN_CX, SCREEN_CY, "imgBack");
+                state = STATE_MENU;
+            }
+        }
+       
+    }
+
+    update(time, delta){  
+        this.gamepad.update();
+        if((this.gamepad.button["X"] && state == STATE_MENU) || (this.gamepad.button["Y"] && state == STATE_GAMEOVER)){
+            this.intermission();
+        }
         switch(state){
             case STATE_INIT:
-                console.log("Init game");
+                //console.log("Init game");
                 state = STATE_MENU;
                 break;
 
             case STATE_MENU:                
-                console.log("IN MENU");
+                //console.log("IN MENU");
                 var font = {font: "64px Arial", fill: "#ffffff"};
-                this.add.text(960, 930, "Press SPACE to start", font);
+                var text = this.add.text(960, 930, "Press X to start", font);
+                text.setOrigin(0.5, 0);
             case STATE_LEADERBOARD:
                 break;
 
@@ -118,12 +132,10 @@ class MainScene extends Phaser.Scene
             case STATE_PLAY:
                 console.log("Playing game");
                 var dt = Math.min(1, delta/1000); //duration of the time period
-                this.timeElapsed.update();
                 this.player.update(dt);
-                this.gamepad.update();
                 this.camera.update();
                 this.circuit.render3D();
-                this.scenarioUI.update(); //This will probably be called later 
+                this.gamemanager.update();
                 this.leaderboardUI.update();
                 //from some GameManager rather than index (a js made for spawning stuff and managing ui)
 
