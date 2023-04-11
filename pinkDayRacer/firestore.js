@@ -24,7 +24,7 @@ class Firestore{
     //only reads single document so it is not used
     // 
 
-    async addScore(db, _name, _score){
+    async addScore(_name, _score){
         const res = await this.addDoc(this.collection(this.db, "players"), {
         name: _name,
         score: _score
