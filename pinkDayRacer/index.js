@@ -37,32 +37,19 @@ class MainScene extends Phaser.Scene
         super({key: 'SceneMain'});
     }
 
-    preload(){
-        this.load.image("imgBack", "img/bg.jpg");
-        this.load.image('imgPlayer', 'img/player.png');
-        this.load.image("eventBox", "img/eventBox.png")
-    }
-
-    create(){
-        // backgrounds
-        this.sprBack = this.add.image(SCREEN_CX, SCREEN_CY, "imgBack");
-
+    init(){
         //manually drawn sprites
         this.sprites = [
             this.add.image(0,0,"imgPlayer").setVisible(false)
         ];
-        
         //instances
         this.circuit = new Circuit(this);
         this.camera = new Camera(this);
         this.gamepad = new Gamepad(this);
         this.player = new Player(this, this.gamepad);
         this.firestore = new Firestore(db, collection, query, where, addDoc, onSnapshot)
-        this.settings = new Settings(this);
-        this.timeElapsed = new TimeElapsed(this);
-        this.scenarioUI = new ScenarioUI(this, this.player, this.camera);
-        this.leaderboardUI = new LeaderboardUI(this, this.firestore);
        
+
         // listener to pause game
         this.input.keyboard.on("keydown-P", function(){
             this.settings.txtPause.text = "[P] Resume"
@@ -75,19 +62,53 @@ class MainScene extends Phaser.Scene
         }, this);
     }
 
+    preload(){
+        this.load.image("imgBack", "img/bg.jpg");
+        this.load.image('imgPlayer', 'img/player.png');
+        this.load.image("eventBox", "img/eventBox.png")
+    }
+
+    create(){
+        // backgrounds
+        this.sprBack = this.add.image(SCREEN_CX, SCREEN_CY, "imgBack");
+
+        this.input.keyboard.on("keydown-SPACE", function(){
+            if(state == STATE_MENU){
+                state = STATE_RESTART;
+                this.init();
+                this.camera.init();
+                this.player.init();
+                this.settings = new Settings(this);
+                this.timeElapsed = new TimeElapsed(this);
+                this.scenarioUI = new ScenarioUI(this, this.player, this.camera);
+                this.leaderboardUI = new LeaderboardUI(this, this.firestore);
+                
+            }else{
+                if(state == STATE_GAMEOVER){
+                    this.sprBack = this.add.image(SCREEN_CX, SCREEN_CY, "imgBack");
+                    state = STATE_MENU;
+                }
+            }
+        }, this);
+
+    }
+
     update(time, delta){   
         switch(state){
             case STATE_INIT:
                 console.log("Init game");
+                state = STATE_MENU;
+                break;
 
-                this.camera.init();
-                this.player.init();
-
-                state = STATE_RESTART;
+            case STATE_MENU:                
+                console.log("IN MENU");
+                var font = {font: "64px Arial", fill: "#ffffff"};
+                this.add.text(960, 930, "Press SPACE to start", font);
+            case STATE_LEADERBOARD:
                 break;
 
             case STATE_RESTART:
-                console.log("Restart game");
+                console.log("Restart game", state);
                 this.player.restart();
                 this.circuit.create();
 
@@ -95,7 +116,7 @@ class MainScene extends Phaser.Scene
                 break;
 
             case STATE_PLAY:
-                //console.log("Playing game");
+                console.log("Playing game");
                 var dt = Math.min(1, delta/1000); //duration of the time period
                 this.timeElapsed.update();
                 this.player.update(dt);
@@ -114,7 +135,7 @@ class MainScene extends Phaser.Scene
                 break;
 
             case STATE_GAMEOVER:
-                //console.log("Game over.");
+                console.log("Game over.");
                 break;
         }
     }

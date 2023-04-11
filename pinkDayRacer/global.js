@@ -12,9 +12,11 @@ const SCREEN_CY = SCREEN_H/2;
 
 // game states
 const STATE_INIT = 1;
-const STATE_RESTART = 2;
-const STATE_PLAY = 3;
-const STATE_GAMEOVER = 4;
+const STATE_MENU = 2;
+const STATE_LEADERBOARD = 3;
+const STATE_RESTART = 4;
+const STATE_PLAY = 5;
+const STATE_GAMEOVER = 6;
 
 // sprites
 const PLAYER = 0;
