@@ -33,7 +33,7 @@ you notice cuts on their arms. What do you do?",
                    [[0, 1], " \
 You were rejected by your crush, your favorite University,\n \
 your parents don't love you anymore. You are a failure; how\n \
-do you handle your cope with your depressing situation.", 
+do you cope with your depressing situation.", 
 "Try and improve yourself (Workout, study,\nmake your parents proud, etc.)",
 "Go to therapy to learn to cope\nwith your emotions.",
 "Blame everybody, everything, and go on\na rampage!"
@@ -52,7 +52,7 @@ It's the beginning of semester 1, you not only have Functions\n \
 but now you have the hardest marker for Biology, an accent \n \
 heavy and lazy teacher for Functions, and they all have a \n \
 tremendous workload. You're getting more anxious by the day.\n \
-1 month in, you're burnt out, and you're failed one of your\n \
+1 month in, you're burnt out, and you've failed one of your\n \
  tests. What do you do?",
 "Try to get through it, you don’t want\npeople to think your stupid!",
 "Ask your guidance counselor about your\noptions to swap classes for something\neasier in your 2nd semester",

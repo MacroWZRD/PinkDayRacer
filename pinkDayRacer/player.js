@@ -75,6 +75,17 @@ class Player{
        
     }
 
+    offCircuit(){
+        if (this.turnClamp[0] == this.x || this.x == this.turnClamp[1]){
+            if (this.speed > 0){
+                this.speed -= 100;
+            }
+            else{
+                this.speed = 0;
+            }
+        }
+    }
+
     accelerate(dt){
         if (!this.gamepad.enabled){
             this.speed += (this.cursors.up.isDown || this.W_KEY.isDown) ? this.acceleration * dt: 0;
@@ -107,9 +118,14 @@ class Player{
         this.turning(dt);
         this.accelerate(dt);
         this.lanes();
+        this.offCircuit();
         var circuit = this.scene.circuit;
+        var interval = Math.floor((this.z/100) / (2000 / circuit.circuitDesign.length));
+        console.log(this.x)
+        var counterSteer = circuit.circuitDesign[interval][0];
         this.z += this.speed * dt;
-        this.x += this.turnSpeed * dt
+        this.x += (this.turnSpeed * (this.speed/5000)) * dt;
+        this.x -= ((counterSteer) * (this.speed/10000)) * dt;
         this.x = Math.max(Math.min(this.x, this.turnClamp[1]), this.turnClamp[0]);
         this.z = Math.max(this.z, 0);
         if(this.z <= 0){

@@ -20,7 +20,7 @@ class Circuit
         this.total_segments = null;
 
         // number of visable segments to be drawn
-        this.visable_segments = 200;
+        this.visable_segments = 600;
 
         // number of segments that forms a rumble strip
         this.rumble_segments = 5;
@@ -40,25 +40,25 @@ class Circuit
             [1, 0],                 // Right Turn
             [-0.5, 0.5],           // Upward Curve
             [-1, 0.25],            // Upward Curve
-            [-1.5, 0.125],              // Upward Curve
-            [-2, 0.1],            // Upward Curve
+            [1.5, 0.125],              // Upward Curve
+            [2, 0.1],            // Upward Curve
             [-2.5, 0.05],           // Upward Curve
             [-2, 0],                // Left Turn
             [0, 0.5],               // Straight Section
             [-1.5, -0.05],          // Downward Curve
             [-1.5, -0.1],           // Downward Curve
-            [-1, -0.125],            // Downward Curve
-            [-1, 0],                // Left-Right Combination
+            [1, -0.125],            // Downward Curve
+            [1, 0],                // Left-Right Combination
             [0.5, 0],               // Left-Right Combination
             [-0.5, 0],              // Left-Right Combination
             [0, 0],                 // Straight Section
             [-0.5, 0],              // Hairpin Turn
             [-1, 0.5],             // Upward Curve
-            [-1.5, 0.25],            // Upward Curve
+            [1.5, 0.25],            // Upward Curve
             [-1.5, 0.125],           // Upward Curve
             [-2, 0],                // Right Turn
-            [-1.5, -0.05],          // Downward Curve
-            [-1.5, -0.125],           // Downward Curve
+            [1.5, -0.05],          // Downward Curve
+            [1.5, -0.125],           // Downward Curve
             [-1, -0.25],            // Downward Curve
             [-0.5, 0],              // Left-Right Combination
             [0.5, 0],               // Left-Right Combination
@@ -68,6 +68,7 @@ class Circuit
             [0, 0]                  // Start/Finish Line
         ];
 
+        this.circuitDesign.sort(() => Math.random() - 0.5);
     
     }
 
@@ -87,7 +88,7 @@ class Circuit
     }
 
     createRoad(){
-        this.createSection(5000);
+        this.createSection(2000);
     }
 
     createSection(nSegments){
@@ -98,14 +99,14 @@ class Circuit
 
     createSegment() {
         const COLORS = {
-            LIGHT: { road: '0x888888', grass: '0x429352', rumble: '0xb8312e' },
-            DARK: { road: '0x666666', grass: '0x397d46', rumble: '0xDDDDDD', lane: '0xFFFFFF' }
-        };
+            LIGHT: { road: '0x393939', grass: '0x550055', rumble: '0xFF0000' },
+            DARK: { road: '0x282828', grass: '0x330033', rumble: '0xFF0000', lane: '0xFFFFFF' }
+          };                
       
         var n = this.segments.length;
     
         // determine the circuit interval
-        var interval = Math.floor(n / (5000 / this.circuitDesign.length));
+        var interval = Math.floor(n / (2000 / this.circuitDesign.length));
       
         // add new segment
         this.segments.push({
