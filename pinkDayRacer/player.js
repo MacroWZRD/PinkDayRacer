@@ -39,6 +39,8 @@ class Player{
         }
         this.lane = 0;
         this.laps = 0;
+
+        this.circuit = [];
     }
 
     init(){

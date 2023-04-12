@@ -34,6 +34,42 @@ class Circuit
 
         // total road length
         this.roadLength = null;
+
+        this.circuitDesign = [
+            [0, 0],                 // Start/Finish Line
+            [0, 0],                 // Straight Section
+            [1, 0],                 // Right Turn
+            [-0.5, 0.5],           // Upward Curve
+            [-1, 0.25],            // Upward Curve
+            [-1.5, 0.125],              // Upward Curve
+            [-2, 0.1],            // Upward Curve
+            [-2.5, 0.05],           // Upward Curve
+            [-2, 0],                // Left Turn
+            [0, 0.5],               // Straight Section
+            [-1.5, -0.05],          // Downward Curve
+            [-1.5, -0.1],           // Downward Curve
+            [-1, -0.125],            // Downward Curve
+            [-1, 0],                // Left-Right Combination
+            [0.5, 0],               // Left-Right Combination
+            [-0.5, 0],              // Left-Right Combination
+            [0, 0],                 // Straight Section
+            [-0.5, 0],              // Hairpin Turn
+            [-1, 0.5],             // Upward Curve
+            [-1.5, 0.25],            // Upward Curve
+            [-1.5, 0.125],           // Upward Curve
+            [-2, 0],                // Right Turn
+            [-1.5, -0.05],          // Downward Curve
+            [-1.5, -0.125],           // Downward Curve
+            [-1, -0.25],            // Downward Curve
+            [-0.5, 0],              // Left-Right Combination
+            [0.5, 0],               // Left-Right Combination
+            [0, 0],                 // Straight Section
+            [0.5, 0],               // Left Turn
+            [0, 0],                 // Straight Section
+            [0, 0]                  // Start/Finish Line
+        ];
+
+    
     }
 
     create(){
@@ -52,7 +88,7 @@ class Circuit
     }
 
     createRoad(){
-        this.createSection(1000);
+        this.createSection(5000);
     }
 
     createSection(nSegments){
@@ -61,31 +97,34 @@ class Circuit
        } 
     }
 
-    createSegment(){
-
+    createSegment() {
         const COLORS = {
-            LIGHT: {road: '0x888888', grass: '0x429352', rumble: '0xb8312e'},
-            DARK:  {road: '0x666666', grass: '0x397d46', rumble: '0xDDDDDD', lane: '0xFFFFFF'}
+            LIGHT: { road: '0x888888', grass: '0x429352', rumble: '0xb8312e' },
+            DARK: { road: '0x666666', grass: '0x397d46', rumble: '0xDDDDDD', lane: '0xFFFFFF' }
         };
-
+      
         var n = this.segments.length;
-        
+    
+        // determine the circuit interval
+        var interval = Math.floor(n / (5000 / this.circuitDesign.length));
+      
         // add new segment
         this.segments.push({
             index: n,
-
+        
             point: {
-                world: {x: 0, y: 0, z: n*this.segmentLength},
-                screen: {x: 0, y: 0, z: 0},
+                world: { x: 0, y: 0, z: n * this.segmentLength },
+                screen: { x: 0, y: 0, z: 0 },
                 scale: -1,
-                
             },
-
-            color: Math.floor(n/this.rumble_segments)%2 ? COLORS.DARK : COLORS.LIGHT,
-
-            curve: (500>n) ? 0.5 : -0.5
+        
+            color: Math.floor(n / this.rumble_segments) % 2 ? COLORS.DARK : COLORS.LIGHT,
+        
+            curveX: this.circuitDesign[interval][0],
+            curveY: this.circuitDesign[interval][1],
         });
     }
+      
 
     getSegment(positionZ){
         if (positionZ<0) positionZ += this.roadLength;
@@ -111,51 +150,55 @@ class Circuit
 
     render3D(){
         this.graphics.clear();
-
-        var x = 0, dx = 0;
-
+    
+        var x = 0, y = 0, z = 0; // Initialize x, y, and z variables for the road position
+        var dx = 0, dy = 0 // Initialize dx, dy variables for the road curvature
+    
         var clipBottomLine = SCREEN_H;
-
+    
         var camera = this.scene.camera;
-
+    
         var baseSegment = this.getSegment(camera.z);
         var baseIndex = baseSegment.index;
-
+    
         for (var n=0; n<this.visable_segments; n++){
-
+    
             var currIndex = (baseIndex + n) % this.total_segments;
             var currSegment = this.segments[currIndex];
-            
+    
             var offsetZ = (currIndex < baseIndex) ? this.roadLength : 0;
-
-            this.project3D(currSegment.point, camera.x - x, camera.y, camera.z-offsetZ, camera.distToPlane);
-
+    
+            // Calculate the road position and curvature for the current segment
             x += dx;
-            dx += currSegment.curve;
-            
+            y += dy;
+            dx += currSegment.curveX;
+            dy += currSegment.curveY;
+    
+            this.project3D(currSegment.point, camera.x - x, camera.y - y, camera.z - z - offsetZ, camera.distToPlane);
+    
             var currBottomLine = currSegment.point.screen.y;
             if (n>0 && currBottomLine < clipBottomLine){
                 var prevIndex = (currIndex>0) ? currIndex-1 : this.total_segments-1;
                 var prevSegment = this.segments[prevIndex];
-
+    
                 var p1 = prevSegment.point.screen;
                 var p2 = currSegment.point.screen;
-
+    
                 this.drawSegment(
                     p1.x, p1.y, p1.w,
                     p2.x, p2.y, p2.w,
                     currSegment.color
                 );
-
+    
                 //move the clipping bottom line up
                 clipBottomLine = currBottomLine;
             }
-            
-        }    
-        
+    
+        }
+    
         //draw all the visible objects on the rendering texture
         this.texture.clear();
-
+    
         var player = this.scene.player;
         this.texture.draw(player.sprite, player.screen.x, player.screen.y);
     }
