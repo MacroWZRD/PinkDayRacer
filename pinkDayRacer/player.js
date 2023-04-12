@@ -9,7 +9,7 @@ class Player{
         this.D_KEY = this.scene.input.keyboard.addKey(68);
         this.S_KEY = this.scene.input.keyboard.addKey(83);
         this.W_KEY = this.scene.input.keyboard.addKey(87);
-        this.sprite = scene.sprites[PLAYER]
+        this.sprite = this.scene.sprites[PLAYER];
 
         this.x = 0;
         this.y = 0;
@@ -22,8 +22,10 @@ class Player{
         this.screen = {x:0, y:0, w:0, h:0};
 
         //max speed (to avoid moving for more than 1 road segment, assuming 60 fps)
-        this.maxSpeed = (scene.circuit.segmentLength) / (1/60);
-        this.acceleration = this.maxSpeed/3;
+        this.originalMaxSpeed = (scene.circuit.segmentLength) / (1/60);
+        this.maxSpeed = this.originalMaxSpeed;
+        this.originalAcceleration = this.maxSpeed/3;
+        this.acceleration = this.originalAcceleration;
         this.groundFriction = this.maxSpeed/6;
         this.speed = 0; //current speed
 

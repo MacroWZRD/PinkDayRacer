@@ -35,31 +35,8 @@ class MainScene extends Phaser.Scene
 {
     constructor(){
         super({key: 'SceneMain'});
-    }
-
-    init(){
-        //manually drawn sprites
-        this.sprites = [
-            this.add.image(0,0,"imgPlayer").setVisible(false)
-        ];
-        //instances
-        this.circuit = new Circuit(this);
-        this.camera = new Camera(this);
-        this.gamepad = new Gamepad(this);
-        this.player = new Player(this, this.gamepad);
         this.firestore = new Firestore(db, collection, query, where, addDoc, onSnapshot)
-       
-
-        // listener to pause game
-        this.input.keyboard.on("keydown-P", function(){
-            this.settings.txtPause.text = "[P] Resume"
-            this.scene.pause();
-            this.scene.launch("ScenePause");  
-        }, this);
-
-        this.events.on("resume", function(){
-            this.settings.show();
-        }, this);
+        
     }
 
     preload(){
@@ -67,12 +44,46 @@ class MainScene extends Phaser.Scene
         this.load.image('imgPlayer', 'img/player.png');
         this.load.image("eventBox", "img/eventBox.png");
         this.load.image("title", "img/title.png");
+        this.load.image("gameover", "img/gameover.png");
+        this.load.image("raindrops", "img/raindrops.png");
+        this.load.image("anxiety", "img/anxiety.png");
+        this.load.image("paint", "img/paint.png");
+        this.load.audio("anxietyTheme", "img/Anxiety_Theme.mp3");
+        this.load.audio("depressionTheme", "img/Depression_Theme.mp3");
+        this.load.audio("mainTheme", "img/main_Theme.mp3");
+        this.load.audio("endTheme", "img/end_Theme.mp3");
     }
 
     create(){
-        // backgrounds
-        this.sprBack = this.add.image(SCREEN_CX, SCREEN_CY, "imgBack");
-        
+        var config = {
+            mute: false,
+            volume: 1,
+            rate: 1,
+            detune: 0,
+            seek: 0,
+            loop: true,
+            delay: 0
+        };
+
+        this.sounds = [
+            this.sound.add("mainTheme", config),
+            this.sound.add("endTheme", config),
+            this.sound.add("depressionTheme", config),
+            this.sound.add("anxietyTheme", config)
+        ];
+
+        this.main_menu();
+        //manually drawn sprites
+        this.sprites = [
+            this.add.image(0,0,"imgPlayer").setVisible(false)
+        ];
+
+        //instances
+        this.circuit = new Circuit(this);
+        this.gamepad = new Gamepad(this);
+        this.player = new Player(this, this.gamepad);
+        this.camera = new Camera(this);
+
         this.input.keyboard.on("keydown-X", function(){
             this.intermission();
         }, this);
@@ -81,22 +92,66 @@ class MainScene extends Phaser.Scene
             this.intermission();
         }, this);
 
+
+        // // listener to pause game
+        // this.input.keyboard.on("keydown-Y", function(){
+        //   this.pause();
+        // }, this);
+
+        // this.events.on("resume", function(){
+        //     this.settings.show();
+        //     this.timeElapsed.resume();
+        // }, this);
+    }
+
+    // pause(){
+    //     this.settings.txtPause.text = "[Y] Resume";
+    //     this.timeElapsed.pause();
+    //     this.scene.pause();
+    //     this.scene.launch("ScenePause");  
+    // }
+
+    main_menu(){
+        this.sounds[0].play();
+        console.log("played main theme");
+        this.sounds[1].pause();
+        this.sprBack = this.add.image(SCREEN_CX, SCREEN_CY, "imgBack");
+
+        this.title = this.add.image(960, 250, "title");
+        this.title.setOrigin(0.5, 0.5);
+        this.title.alpha = 1;
+        var font = {font: "64px Arial", fill: "#ffffff"};
+        var players = this.firestore.players;
+        if(players.length > 0){
+            var t = players[0];
+            this.highscore = this.add.text(960, 540, "Highscore: " + t[2] + " by " + t[1], font);
+            this.highscore.setOrigin(0.5, 0.5);
+            this.highscore.alpha = 1;
+        }
+
+        
+        this.startText = this.add.text(960, 930, "Press X to start", font);
+        this.startText.setOrigin(0.5, 0);
     }
 
     intermission(){
         if(state == STATE_MENU){
             state = STATE_RESTART;
-            this.init();
             this.camera.init();
             this.player.init();
             this.settings = new Settings(this);
-            this.gamemanager = new GameManager(this,  new TimeElapsed(this), new ScenarioUI(this, this.player, this.camera));
+            this.timeElapsed = new TimeElapsed(this)
+            this.gamemanager = new GameManager(this, this.player, this.camera, this.firestore, this.timeElapsed, new ScenarioUI(this, this.player, this.camera));
             this.leaderboardUI = new LeaderboardUI(this, this.firestore);
             
         }else{
-            if( state == STATE_GAMEOVER){
-                this.sprBack = this.add.image(SCREEN_CX, SCREEN_CY, "imgBack");
+            if( state == STATE_GAMEOVER){ //redraws the menu
                 state = STATE_MENU;
+                this.main_menu();
+                for(var audio of this.sounds.values()){
+                    audio.pause();
+                }
+                this.scene.restart();
             }
         }
        
@@ -104,6 +159,10 @@ class MainScene extends Phaser.Scene
 
     update(time, delta){  
         this.gamepad.update();
+        if(this.gamepad.button["Y"] && state == STATE_PLAY){
+            this.pause();
+        }
+
         if((this.gamepad.button["X"] && state == STATE_MENU) || (this.gamepad.button["Y"] && state == STATE_GAMEOVER)){
             this.intermission();
         }
@@ -114,36 +173,40 @@ class MainScene extends Phaser.Scene
                 break;
 
             case STATE_MENU:                
-                //console.log("IN MENU");
-                var font = {font: "64px Arial", fill: "#ffffff"};
-                var text = this.add.text(960, 930, "Press X to start", font);
-                text.setOrigin(0.5, 0);
+                console.log("IN MENU");
+               
+                
+                this.startText.alpha = 1;
+               
+                break;
             case STATE_LEADERBOARD:
+                this.leaderboardUI.update();
                 break;
 
             case STATE_RESTART:
                 console.log("Restart game", state);
+                this.title.alpha = 0;
+                if(this.highscore != null){
+                    this.highscore.alpha = 0;
+                }
+                
+                this.startText.alpha = 0;
                 this.player.restart();
                 this.circuit.create();
-
                 state = STATE_PLAY;
                 break;
 
             case STATE_PLAY:
                 console.log("Playing game");
+                this.startText.alpha = 0;
+               
                 var dt = Math.min(1, delta/1000); //duration of the time period
+                this.timeElapsed.update();
                 this.player.update(dt);
                 this.camera.update();
                 this.circuit.render3D();
                 this.gamemanager.update();
-                this.leaderboardUI.update();
-                //from some GameManager rather than index (a js made for spawning stuff and managing ui)
-
-                //console.log(this.player.lane);
-                if (this.player.laps > 0){
-                    state = STATE_GAMEOVER;
-                }
-                // 
+    
                 break;
 
             case STATE_GAMEOVER:
@@ -153,22 +216,33 @@ class MainScene extends Phaser.Scene
     }
 }
 
-// ---------------------------------------------------------
-// Pause Scene
-// ---------------------------------------------------------
+// // ---------------------------------------------------------
+// // Pause Scene
+// // ---------------------------------------------------------
 class PauseScene extends Phaser.Scene 
 {
-    constructor(){
-        super({key: 'ScenePause'});
-    }
+//     constructor(){
+//         super({key: 'ScenePause'});
+//         this.gamepad = new Gamepad(this);
+//     }
 
-    create(){
-        // listener to resume game
-        this.input.keyboard.on("keydown-P", function(){
-            this.scene.resume("SceneMain");
-            this.scene.stop();
-        }, this);
-    }
+//     resume(){
+//         this.scene.resume("SceneMain");
+//         this.scene.stop();
+//     }
+
+//     create(){
+//         // listener to resume game
+//         this.input.keyboard.on("keydown-Y", function(){
+//             this.resume();
+//         }, this);
+//     }
+
+//     update(){
+//         if(this.gamepad.button["Y"]){
+//             this.resume();
+//         }
+//     }
 }
 
 // ---------------------------------------------------------

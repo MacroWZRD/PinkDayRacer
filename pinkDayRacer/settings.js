@@ -10,6 +10,6 @@ class Settings
     }
 
     show(){
-        this.txtPause.text = "[P] Pause";
+        //this.txtPause.text = "[Y] Pause";
     }
 }

@@ -16,6 +16,8 @@ class Firestore{
                 var i = this.players.push(null) - 1;
                 this.players[i] = [doc.id, doc.data().name, doc.data().score];
             });
+
+            this.players.sort(function(a, b){return b[2] - a[2]});
             console.log(this.players, "is the updated player list");
         });
 
